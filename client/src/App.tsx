@@ -74,7 +74,7 @@ function App() {
           required
         />
 
-        <button type="submit" disabled={!question.trim()}>{loading ? "Generating..." : "Ask"}</button>
+        <button type="submit" disabled={!question.trim() || loading}>{loading ? "Generating..." : "Ask"}</button>
       </form>
       {error && <p role='alert'>{error}</p> }
       {answer && (
