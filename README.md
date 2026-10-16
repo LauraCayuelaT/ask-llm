@@ -88,11 +88,14 @@ From `client`:
 npm run build
 ```
 
-Eight automated backend tests cover invalid input, successful event ordering and sources, and provider failures before and during streaming.
+Eleven automated tests run with `npm test`:
 
-Tests mock Gemini and require no API key or network calls to the provider. They validate application behavior, not model accuracy.
+- Eight backend tests mock Gemini and verify input validation, SSE event ordering, cited-source metadata, and provider failures before and during streaming.
+- Three frontend parser tests use synthetic byte streams to verify an event split across reads, a UTF-8 character split across byte chunks, and a connection closing before the `done` event. They also check reader-lock release and delivery of partial text before an incomplete-stream error.
 
-I also manually checked live streaming, supported answers, citations, and refusal to answer questions outside the supplied document.
+The parser tests exercise `readAnswerStream`, the same function used by the React component. They run in Node, without mounting React or making network requests.
+
+These tests do not verify Gemini availability, factual accuracy, semantic support for citations, browser rendering, or real network/proxy behavior.
 
 ## AI assistance
 
@@ -100,7 +103,9 @@ I used ChatGPT to help structure the implementation, documentation, suggest code
 
 I reviewed and integrated the suggestions, corrected implementation errors, and validated the application through TypeScript checks, eight automated backend tests, a frontend production build, and manual testing of live streaming and document-based answers.
 
-This standalone sample uses synthetic data and contains no employer code.
+One AI-suggested model choice returned a 404 because it was unavailable to new accounts. I checked the backend error, updated the model to the replacement identified by the provider, and verified a successful streamed response with source metadata.
+
+For the parser follow-up, I checked that the Unicode test splits the encoded UTF-8 bytes inside the emoji, rather than splitting the JavaScript string before encoding.
 
 ## Scope and limitations
 
